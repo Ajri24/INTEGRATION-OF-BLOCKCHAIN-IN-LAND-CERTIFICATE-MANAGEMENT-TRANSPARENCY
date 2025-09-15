@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifikasi Data Tanah</title>
+  <link rel="stylesheet" href="style_dashboard.css">
+
+
+  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+  <style>
+    .btn-action {
+      padding: 4px 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .btn-action:hover {
+      background-color: #45a049;
+    }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: white;
+    }
+    .badge-success { background-color: #4CAF50; }
+    .badge-warning { background-color: #ff9800; }
+    .badge-danger { background-color: #f44336; }
+    .badge-secondary { background-color: #607d8b; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 8px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="document.getElementById('detailModal').style.display='none'">&times;</span>
+        <h3>Detail Data Tanah</h3>
+        <pre id="modalContent" style="white-space:pre-wrap; font-size:14px;"></pre>
+    </div>
+</div>
+
+<input type="checkbox" id="menu-toggle">
+<div class="sidebar">
+    <div class="side-header"><h3>M<span>odern</span></h3></div>
+    <div class="side-content">
+        <div class="profile">
+            <div class="profile-img bg-img" style="background-image: url(img/3.jpeg)"></div>
+            <h4>David Green</h4><small>Art Director</small>
+        </div>
+        <div class="side-menu">
+            <ul>
+                <li><a href="#" class="active"><span class="las la-home"></span><small>Dashboard</small></a></li>
+                <li><a href="#"><span class="las la-user-alt"></span><small>Profile</small></a></li>
+                <li><a href="#"><span class="las la-envelope"></span><small>Mailbox</small></a></li>
+                <li><a href="#"><span class="las la-clipboard-list"></span><small>Projects</small></a></li>
+                <li><a href="#"><span class="las la-shopping-cart"></span><small>Orders</small></a></li>
+                <li><a href="#"><span class="las la-tasks"></span><small>Tasks</small></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="main-content">
+    <header>
+        <div class="header-content">
+            <label for="menu-toggle"><span class="las la-bars"></span></label>
+            <div class="header-menu">
+                <label><span class="las la-search"></span></label>
+                <div class="notify-icon"><span class="las la-envelope"></span><span class="notify">4</span></div>
+                <div class="notify-icon"><span class="las la-bell"></span><span class="notify">3</span></div>
+                <div class="user">
+                    <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
+                    <span class="las la-power-off"></span><span>Logout</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="page-header">
+            <h1>Dashboard</h1><small>Home / Dashboard</small>
+        </div>
+        <div class="page-content">
+            <div class="records table-responsive">
+                <div class="record-header">
+                    <div class="add">
+                        <span>Entries</span>
+                        <select><option value="">ID</option></select>
+                        <button>Add record</button>
+                    </div>
+                    <div class="browse">
+                        <input type="search" placeholder="Search" class="record-search">
+                        <select><option value="">Status</option></select>
+                    </div>
+                </div>
+                <div>
+                  <div>
+                    <table width="100%" id="aktivitasTable">
+    <thead>
+      <tr>
+        <th>Waktu</th>
+        <th>Aktivitas</th>
+        <th>Nomor Buku Tanah</th>
+        <th>Pelaku</th>
+        <th>Tx Hash</th>
+      </tr>
+    </thead>
+                        <tbody id="aktivitasBody">
+                            <!-- Data akan diisi dari fetch JS -->
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script>
+    const contractAddress = "0xd604763C943F53e31469E86A2Eff0f5D380bf7cB"; // ganti dengan alamat kontrakmu
+    async function loadAktivitas() {
+      const res = await fetch("/ABI/abi.json");
+      if (!res.ok) {
+        alert("Gagal memuat ABI");
+        return;
+      }
+
+
+      console.log("ABI berhasil dimuat");
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const abi = await res.json();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(contractAddress, abi, provider);
+      const filterFromBlock = 0; // atau ganti jadi block tertentu
+
+      const tableBody = document.getElementById("aktivitasBody");
+      tableBody.innerHTML = "";
+
+      const events = [
+        { name: "DataTanahDitambahkan", label: "Tambah Data" },
+        { name: "TanahTerverifikasi", label: "Verifikasi Tanah" },
+        { name: "AjukanJualTanah", label: "Pengajuan Jual Tanah" },
+        { name: "VerifikasiTransaksi", label: "Verifikasi Jual Beli" },
+        { name: "TanahBerpindahKepemilikan", label: "Perpindahan Kepemilikan" },
+        { name: "VerifikasiTanah", label: "Verifikasi Manual" }
+      ];
+
+      for (let ev of events) {
+        const logs = await contract.queryFilter(contract.filters[ev.name](), filterFromBlock, "latest");
+
+        logs.forEach(log => {
+          const row = document.createElement("tr");
+          const waktu = new Date(log.blockTimestamp * 1000).toLocaleString();
+
+          // fallback kalau blockTimestamp belum ada, kita fetch manual
+          row.innerHTML = `
+            <td>${waktu || "-"}</td>
+            <td>${ev.label}</td>
+            <td>${log.args[0]}</td>
+            <td>${log.args[1] || "-"}</td>
+            <td><a href="decode.html?tx=${log.transactionHash}" target="_blank">${log.transactionHash.slice(0, 12)}...</a></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      console.log("Jumlah logs yang ditemukan:", logs.length);
+console.log("Contoh log:", logs[0]);
+
+    }
+
+    // Patch untuk ambil timestamp dari block
+    async function patchTimestamps(logs, provider) {
+      const blockTimestamps = {};
+      for (let log of logs) {
+        if (!log.blockTimestamp) {
+          if (!blockTimestamps[log.blockNumber]) {
+            const block = await provider.getBlock(log.blockNumber);
+            blockTimestamps[log.blockNumber] = block.timestamp;
+          }
+          log.blockTimestamp = blockTimestamps[log.blockNumber];
+        }
+      }
+    }
+
+async function run() {
+  const res = await fetch("/ABI/abi.json");
+  if (!res.ok) {
+    console.error("Gagal memuat ABI");
+    return;
+  }
+  console.log("ABI dimuat!");
+
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+  const abi = await res.json();
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const iface = new ethers.utils.Interface(abi);
+
+  const logs = await provider.getLogs({
+    fromBlock: 0,
+    toBlock: "latest",
+    address: contractAddress
+  });
+
+  console.log("Jumlah event ditemukan:", logs.length);
+
+  const parsedEvents = [];
+  for (const log of logs) {
+    try {
+      const parsed = iface.parseLog(log);
+      const block = await provider.getBlock(log.blockNumber);
+      parsedEvents.push({
+        name: parsed.name,
+        args: parsed.args,
+        timestamp: block.timestamp,
+        txHash: log.transactionHash
+      });
+    } catch (e) {
+      console.warn("Log tidak bisa di-parse:", log);
+    }
+  }
+
+  parsedEvents.sort((a, b) => b.timestamp - a.timestamp);
+
+  const tbody = document.getElementById("aktivitasBody");
+  tbody.innerHTML = "";
+
+  for (const evt of parsedEvents) {
+    const waktu = new Date(evt.timestamp * 1000).toLocaleString();
+    const namaEvent = evt.name;
+    const nomorBuku = evt.args.nomorBukuTanah || evt.args[0] || "-";
+    const pelaku =
+      evt.args.oleh ||
+      evt.args.verifikator ||
+      evt.args.pemilikLama ||
+      evt.args.calonPemilik ||
+      evt.args.pemilikBaru ||
+      evt.args[1] || "-";
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${waktu}</td>
+      <td>${namaEvent}</td>
+      <td>${nomorBuku}</td>
+      <td>${pelaku}</td>
+      <td><a href="decode.html?tx=${evt.txHash}" target="_blank">${evt.txHash.slice(0, 12)}...</a></td>
+    `;
+    tbody.appendChild(row);
+    console.log(`Menambahkan row: ${namaEvent}, ${nomorBuku}`);
+  }
+}
+
+
+    window.addEventListener("DOMContentLoaded", run); 
+  </script>
+
+
+
+
+
+
+</body>
+</html>

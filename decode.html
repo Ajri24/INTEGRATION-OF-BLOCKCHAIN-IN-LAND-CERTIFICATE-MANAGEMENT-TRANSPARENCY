@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Decode TX & Detail Tanah</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600;
+      border-left: 5px solid #0d6efd;
+      padding-left: 12px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: calc(100% - 130px);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0b5ed7;
+    }
+
+    .data {
+      margin-top: 30px;
+      background: #f9fafc;
+      padding: 20px;
+      border-left: 4px solid #0d6efd;
+      border-radius: 6px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .link-id {
+      color: #0d6efd;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    p, h3 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    strong {
+      color: #222;
+    }
+
+    @media (max-width: 600px) {
+      input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Decode Transaksi dan Lihat Detail Tanah</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+      <input type="text" id="txHash" placeholder="Masukkan Transaction Hash">
+      <button onclick="decodeTx()">Decode</button>
+    </div>
+
+    <div id="decoded" class="data"></div>
+    <div id="detailTanah" class="data"></div>
+  </div>
+
+<script>
+  window.addEventListener("DOMContentLoaded", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const txHash = params.get("tx");
+    if (txHash) {
+      document.getElementById("txHash").value = txHash;
+      await decodeTx();
+    }
+  });
+
+  const contractAddress = "0xc550897Ca405fF15c201f7cD0C35b0DD6f1B1969";
+  const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+  let contractAbi;
+
+  fetch("/ABI/abi.json")
+    .then(res => res.json())
+    .then(abi => (contractAbi = abi));
+
+  async function decodeTx() {
+    const txHash = document.getElementById("txHash").value;
+    document.getElementById("decoded").innerHTML = "Loading...";
+
+    try {
+      const tx = await provider.getTransaction(txHash);
+      const iface = new ethers.utils.Interface(contractAbi);
+      const decoded = iface.parseTransaction({ data: tx.data, value: tx.value });
+
+      let decodedFunctionHtml = `<p><b>Function:</b> ${decoded.name}</p><ul>`;
+      let idTanah = "";
+
+      for (const [key, val] of Object.entries(decoded.args)) {
+        if (!isNaN(key)) continue;
+        decodedFunctionHtml += `<li><b>${key}:</b> ${val}</li>`;
+        if (key.toLowerCase().includes("buku") || key.toLowerCase().includes("tanah")) {
+          idTanah = val;
+        }
+      }
+      decodedFunctionHtml += `</ul>`;
+
+      // --- Event Log Section ---
+      let eventLogHtml = "";
+      const receipt = await provider.getTransactionReceipt(txHash);
+
+      const abiMinimal = [
+        "event DataTanahDitambahkan(string nomorBukuTanah, address oleh, uint256 timestamp, uint256 blockNumber)",
+        "event TanahBerpindahKepemilikan(string nomorBukuTanah, address pemilikLama, address pemilikBaru, uint256 timestamp, uint256 blockNumber)"
+      ];
+
+      const logIface = new ethers.utils.Interface(abiMinimal);
+
+      let logCount = 0;
+      for (const l of receipt.logs) {
+        if (l.address.toLowerCase() !== contractAddress.toLowerCase()) continue;
+        try {
+          const parsedLog = logIface.parseLog(l);
+          logCount++;
+
+          if (parsedLog.name === "DataTanahDitambahkan") {
+            eventLogHtml += `
+              <h3>🧠 Event: DataTanahDitambahkan</h3>
+              <ul>
+                <li>- nomorBukuTanah: <strong>${parsedLog.args.nomorBukuTanah}</strong></li>
+                <li>- oleh: <strong>${parsedLog.args.oleh}</strong></li>
+                <li>- timestamp: <strong>${parsedLog.args.timestamp.toString()}</strong></li>
+                <li>- blockNumber: <strong>${parsedLog.args.blockNumber.toString()}</strong></li>
+              </ul>`;
+          }
+
+          if (parsedLog.name === "TanahBerpindahKepemilikan") {
+            eventLogHtml += `
+              <h3>🧠 Event: TanahBerpindahKepemilikan</h3>
+              <ul>
+                <li>- nomorBukuTanah: <strong>${parsedLog.args.nomorBukuTanah}</strong></li>
+                <li>- pemilikLama: <strong>${parsedLog.args.pemilikLama}</strong></li>
+                <li>- pemilikBaru: <strong>${parsedLog.args.pemilikBaru}</strong></li>
+                <li>- timestamp: <strong>${parsedLog.args.timestamp.toString()}</strong></li>
+                <li>- blockNumber: <strong>${parsedLog.args.blockNumber.toString()}</strong></li>
+              </ul>`;
+          }
+        } catch (e) {
+          // abaikan log lain
+        }
+      }
+
+      if (!eventLogHtml) {
+        eventLogHtml = `<p>⚠️ Tidak ada event yang dikenali pada transaksi ini.</p>`;
+      } else {
+        eventLogHtml = `<h3>📦 Block: ${receipt.blockNumber}</h3><h3>🔁 Logs ditemukan: ${logCount}</h3>` + eventLogHtml;
+      }
+
+      // Gabungkan: event log + decoded function
+      document.getElementById("decoded").innerHTML = eventLogHtml + decodedFunctionHtml;
+
+      // Muat detail tanah kalau idTanah ditemukan
+      if (idTanah) loadDetail(idTanah);
+    } catch (err) {
+      console.error(err);
+      document.getElementById("decoded").innerText = "Gagal decode transaksi.";
+    }
+  }
+
+  async function loadDetail(idTanah) {
+    const contract = new ethers.Contract(contractAddress, contractAbi, provider);
+
+    try {
+      const data = await contract.getDataTanahLengkap(idTanah);
+      let fields = [
+        "Nomor Buku Tanah", "Desa", "Kecamatan", "Kabupaten", "Provinsi",
+        "Pemegang Hak", "Tanggal Pembukuan", "Oleh", "Tanggal Penerbitan", "Permukaan",
+        "Alas Hak", "Tanggal Alas Hak", "Dibuat Oleh", "ID301", "Tanggal ID301",
+        "Nama", "NIK", "Tempat Lahir", "Tanggal Lahir", "Dalam Perwalian",
+        "Tempat Lahir Wali", "Tanggal Lahir Wali", "Jenis", "Nomor Surat", "Tanggal Surat",
+        "Ditandatangani Oleh", "Diterbitkan Oleh", "Nomor Induk Bidang", "Luas", "Status",
+        "Nomor SU", "Penandatangan SU", "Tanggal TTD SU", "Luas Persil SU",
+        "Sebagai Bidang Induk", "Dihak Atas Tanah", "Toponimi", "Status Batas", "Tanggal Tercatat",
+        "Status Peta", "Nomor Peta", "Validator Batas", "Tanggal Validasi Batas",
+        "Validator Tekstual", "Tanggal Validasi Tekstual", "Klasifikasi Tanah", "Catatan Tambahan",
+        "Nomor Gambar Ukur", "Tanggal Pengukuran", "Tanggal Pembukuan Bidang", "Status Kepemilikan",
+        "Pemilik Sekarang", "Disetujui", "Ada Transaksi Pending"
+      ];
+
+      let html = `<h3>📑 Detail Tanah</h3><ul>`;
+      data.forEach((val, i) => {
+        html += `<li><b>${fields[i] || "Field " + i}:</b> ${val}</li>`;
+      });
+      html += `</ul>`;
+
+      document.getElementById("detailTanah").innerHTML = html;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+
+</body>
+</html>

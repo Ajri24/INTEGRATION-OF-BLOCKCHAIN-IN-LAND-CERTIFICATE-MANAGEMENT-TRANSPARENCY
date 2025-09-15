@@ -1,0 +1,416 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.0;
+
+contract SuratTanahVerifikasiFleksibel {
+
+    struct DataTanah {
+        // Informasi dasar tanah
+        string nomorBukuTanah; // kunci utama pengidentifikasi tanah
+        string desa;
+        string kecamatan;
+        string kabupaten;
+        string provinsi;
+
+        // Informasi pemilik dan legalitas
+        string pemegangHak;
+        string tanggalPembukuan;
+        string oleh;
+        string tanggalPenerbitan;
+        string permukaan;
+        string alasHak;
+        string tanggalAlasHak;
+        string dibuatOleh;
+        string id301;
+        string tanggalID301;
+
+        // Identitas pemilik
+        string nama;
+        string nik;
+        string tempatLahir;
+        string tanggalLahir;
+        string dalamPerwalian;
+        string tempatLahirWali;
+        string tanggalLahirWali;
+        string jenis;
+
+        // Surat keputusan redistribusi
+        string nomorSurat;
+        string tanggalSurat;
+        string ditandatanganiOleh;
+        string diterbitkanOleh;
+
+        // Informasi bidang tanah
+        string nomorIndukBidang;
+        uint256 luas;
+        string status;
+        string nomorSU;
+        string penandatanganSU;
+        string tanggalTandaTanganSU;
+        uint256 luasPersilSU;
+        bool sebagaiBidangInduk;
+        bool dihakAtasTanah;
+
+        // Validasi teknis
+        string toponimi;
+        string statusBatas;
+        string tanggalTercatat;
+        string statusPeta;
+        string nomorPeta;
+        string validatorBatas;
+        string tanggalValidasiBatas;
+        string validatorTekstual;
+        string tanggalValidasiTekstual;
+        string klasifikasiTanah;
+        string catatanTambahan;
+        string nomorGambarUkur;
+        string tanggalPengukuran;
+        string tanggalPembukuanBidang;
+        string statusKepemilikan;
+
+        // Status kepemilikan dan verifikasi
+        address pemilikSekarang;
+
+        // Verifikasi lama (harus verifikasi sebelum jual)
+        address[] verifikator;
+        mapping(address => bool) sudahVerifikasi;
+
+        uint256 jumlahVerifikasi;
+        bool disetujui;
+        address[] riwayatPemilik;
+
+        // Data jual beli sementara (menunggu verifikasi)
+        bool adaTransaksiPending;
+        string namaPemilikBaruPending;
+        address alamatPemilikBaruPending;
+        address[] verifikatorBaruPending;
+        mapping(address => bool) sudahVerifikasiTransaksi;
+        uint256 jumlahVerifikasiTransaksi;
+    }
+
+    // Mapping berdasarkan nomorBukuTanah
+    mapping(string => DataTanah) private dataTanah;
+
+    string[] public semuaNomorBukuTanah;
+    event TanahTerverifikasi(string nomorBukuTanah);
+    event TanahBerpindahKepemilikan(string nomorBukuTanah, address pemilikBaru);
+
+    modifier hanyaPemilik(string memory _nomorBukuTanah) {
+        require(msg.sender == dataTanah[_nomorBukuTanah].pemilikSekarang, "Bukan pemilik tanah");
+        _;
+    }
+
+    // Fungsi tambah data tanah baru sekaligus set verifikator
+    function tambahDataTanah(
+        string memory _nomorBukuTanah,
+        string memory _desa,
+        string memory _kecamatan,
+        string memory _kabupaten,
+        string memory _provinsi,
+        string memory _pemegangHak,
+        string memory _tanggalPembukuan,
+        string memory _oleh,
+        string memory _tanggalPenerbitan,
+        string memory _permukaan,
+        string memory _alasHak,
+        string memory _tanggalAlasHak,
+        string memory _dibuatOleh,
+        string memory _id301,
+        string memory _tanggalID301,
+        string memory _nama,
+        string memory _nik,
+        string memory _tempatLahir,
+        string memory _tanggalLahir,
+        string memory _dalamPerwalian,
+        string memory _tempatLahirWali,
+        string memory _tanggalLahirWali,
+        string memory _jenis,
+        string memory _nomorSurat,
+        string memory _tanggalSurat,
+        string memory _ditandatanganiOleh,
+        string memory _diterbitkanOleh,
+        string memory _nomorIndukBidang,
+        uint256 _luas,
+        string memory _status,
+        string memory _nomorSU,
+        string memory _penandatanganSU,
+        string memory _tanggalTandaTanganSU,
+        uint256 _luasPersilSU,
+        bool _sebagaiBidangInduk,
+        bool _dihakAtasTanah,
+        string memory _toponimi,
+        string memory _statusBatas,
+        string memory _tanggalTercatat,
+        string memory _statusPeta,
+        string memory _nomorPeta,
+        string memory _validatorBatas,
+        string memory _tanggalValidasiBatas,
+        string memory _validatorTekstual,
+        string memory _tanggalValidasiTekstual,
+        string memory _klasifikasiTanah,
+        string memory _catatanTambahan,
+        string memory _nomorGambarUkur,
+        string memory _tanggalPengukuran,
+        string memory _tanggalPembukuanBidang,
+        string memory _statusKepemilikan,
+        address _pemilik,
+        address[] memory _verifikator
+    ) public {
+        require(bytes(dataTanah[_nomorBukuTanah].nomorBukuTanah).length == 0, "Tanah sudah terdaftar");
+
+        DataTanah storage dt = dataTanah[_nomorBukuTanah];
+
+        dt.nomorBukuTanah = _nomorBukuTanah;
+        dt.desa = _desa;
+        dt.kecamatan = _kecamatan;
+        dt.kabupaten = _kabupaten;
+        dt.provinsi = _provinsi;
+        dt.pemegangHak = _pemegangHak;
+        dt.tanggalPembukuan = _tanggalPembukuan;
+        dt.oleh = _oleh;
+        dt.tanggalPenerbitan = _tanggalPenerbitan;
+        dt.permukaan = _permukaan;
+        dt.alasHak = _alasHak;
+        dt.tanggalAlasHak = _tanggalAlasHak;
+        dt.dibuatOleh = _dibuatOleh;
+        dt.id301 = _id301;
+        dt.tanggalID301 = _tanggalID301;
+        dt.nama = _nama;
+        dt.nik = _nik;
+        dt.tempatLahir = _tempatLahir;
+        dt.tanggalLahir = _tanggalLahir;
+        dt.dalamPerwalian = _dalamPerwalian;
+        dt.tempatLahirWali = _tempatLahirWali;
+        dt.tanggalLahirWali = _tanggalLahirWali;
+        dt.jenis = _jenis;
+        dt.nomorSurat = _nomorSurat;
+        dt.tanggalSurat = _tanggalSurat;
+        dt.ditandatanganiOleh = _ditandatanganiOleh;
+        dt.diterbitkanOleh = _diterbitkanOleh;
+        dt.nomorIndukBidang = _nomorIndukBidang;
+        dt.luas = _luas;
+        dt.status = _status;
+        dt.nomorSU = _nomorSU;
+        dt.penandatanganSU = _penandatanganSU;
+        dt.tanggalTandaTanganSU = _tanggalTandaTanganSU;
+        dt.luasPersilSU = _luasPersilSU;
+        dt.sebagaiBidangInduk = _sebagaiBidangInduk;
+        dt.dihakAtasTanah = _dihakAtasTanah;
+        dt.toponimi = _toponimi;
+        dt.statusBatas = _statusBatas;
+        dt.tanggalTercatat = _tanggalTercatat;
+        dt.statusPeta = _statusPeta;
+        dt.nomorPeta = _nomorPeta;
+        dt.validatorBatas = _validatorBatas;
+        dt.tanggalValidasiBatas = _tanggalValidasiBatas;
+        dt.validatorTekstual = _validatorTekstual;
+        dt.tanggalValidasiTekstual = _tanggalValidasiTekstual;
+        dt.klasifikasiTanah = _klasifikasiTanah;
+        dt.catatanTambahan = _catatanTambahan;
+        dt.nomorGambarUkur = _nomorGambarUkur;
+        dt.tanggalPengukuran = _tanggalPengukuran;
+        dt.tanggalPembukuanBidang = _tanggalPembukuanBidang;
+        dt.statusKepemilikan = _statusKepemilikan;
+
+        dt.pemilikSekarang = _pemilik;
+
+        // set verifikator lama
+        dt.verifikator = _verifikator;
+        dt.jumlahVerifikasi = 0;
+        dt.disetujui = false;
+
+        // reset mapping sudahVerifikasi (default false)
+        for (uint i = 0; i < _verifikator.length; i++) {
+            dt.sudahVerifikasi[_verifikator[i]] = false;
+        }
+
+        dt.riwayatPemilik.push(_pemilik);
+
+        dt.adaTransaksiPending = false;
+        dt.jumlahVerifikasiTransaksi = 0;
+
+        semuaNomorBukuTanah.push(_nomorBukuTanah);
+    }
+
+    function getSemuaNomorBukuTanah() public view returns (string[] memory) {
+    return semuaNomorBukuTanah;
+}
+
+
+
+function sudahVerifikasi(string memory _nomorBukuTanah, address _addr) public view returns (bool) {
+    return dataTanah[_nomorBukuTanah].sudahVerifikasi[_addr];
+}
+
+function sudahVerifikasiTransaksi(string memory _nomorBukuTanah, address _addr) public view returns (bool) {
+    return dataTanah[_nomorBukuTanah].sudahVerifikasiTransaksi[_addr];
+}
+
+function getDetailTanah(string memory _nomorBukuTanah) public view returns (
+    string memory nomorIndukBidang,
+    string memory pemilikNama,
+    address pemilik,
+    bool disetujui,
+    address[] memory verifikator
+) {
+    DataTanah storage dt = dataTanah[_nomorBukuTanah];
+    return (
+        dt.nomorIndukBidang,
+        dt.nama,
+        dt.pemilikSekarang,
+        dt.disetujui,
+        dt.verifikator
+    );
+}
+
+    // Fungsi verifikasi oleh verifikator lama (untuk transaksi jual beli)
+    function verifikasiTransaksi(string memory _nomorBukuTanah) public {
+        DataTanah storage dt = dataTanah[_nomorBukuTanah];
+        require(dt.adaTransaksiPending, "Tidak ada transaksi jual beli");
+        require(!dt.sudahVerifikasiTransaksi[msg.sender], "Sudah verifikasi transaksi");
+        
+        bool terdaftar = false;
+        for (uint256 i = 0; i < dt.verifikator.length; i++) {
+            if (dt.verifikator[i] == msg.sender) {
+                terdaftar = true;
+                break;
+            }
+        }
+        require(terdaftar, "Bukan verifikator lama");
+
+        dt.sudahVerifikasiTransaksi[msg.sender] = true;
+        dt.jumlahVerifikasiTransaksi++;
+
+        if (dt.jumlahVerifikasiTransaksi == dt.verifikator.length && dt.verifikator.length > 0) {
+            // Semua verifikator lama setuju, proses jual beli berhasil
+            dt.disetujui = true;
+            dt.pemilikSekarang = dt.alamatPemilikBaruPending;
+            dt.nama = dt.namaPemilikBaruPending;
+            dt.riwayatPemilik.push(dt.alamatPemilikBaruPending);
+
+            // Ganti verifikator lama dengan yang baru
+            dt.verifikator = dt.verifikatorBaruPending;
+
+            // Reset mapping verifikasi transaksi dan verifikasi lama
+            for (uint i = 0; i < dt.verifikator.length; i++) {
+                dt.sudahVerifikasi[dt.verifikator[i]] = false;
+            }
+
+            // Reset transaksi pending
+            dt.adaTransaksiPending = false;
+            dt.jumlahVerifikasiTransaksi = 0;
+
+            emit TanahBerpindahKepemilikan(_nomorBukuTanah, dt.pemilikSekarang);
+        }
+    }
+
+    function verifikasiTanahBaru(string memory _nomorBukuTanah) public {
+    DataTanah storage dt = dataTanah[_nomorBukuTanah];
+    require(dt.pemilikSekarang != address(0), "Data tanah tidak ada");
+    require(!dt.sudahVerifikasi[msg.sender], "Sudah verifikasi");
+    bool terdaftar = false;
+    for(uint i = 0; i < dt.verifikator.length; i++) {
+        if(dt.verifikator[i] == msg.sender) {
+            terdaftar = true;
+            break;
+        }
+    }
+    require(terdaftar, "Bukan verifikator");
+    dt.sudahVerifikasi[msg.sender] = true;
+    dt.jumlahVerifikasi++;
+    if(dt.jumlahVerifikasi >= dt.verifikator.length) {
+        dt.disetujui = true;
+        emit TanahTerverifikasi(_nomorBukuTanah);
+    }
+}
+
+
+    // Fungsi mengajukan jual tanah, oleh pemilik sekarang
+    function ajukanJualTanah(
+        string memory _nomorBukuTanah,
+        string memory _namaPemilikBaru,
+        address _alamatPemilikBaru,
+        address[] memory _verifikatorBaru
+    ) public hanyaPemilik(_nomorBukuTanah) {
+        DataTanah storage dt = dataTanah[_nomorBukuTanah];
+        require(!dt.adaTransaksiPending, "Masih ada transaksi pending");
+
+        dt.namaPemilikBaruPending = _namaPemilikBaru;
+        dt.alamatPemilikBaruPending = _alamatPemilikBaru;
+        dt.verifikatorBaruPending = _verifikatorBaru;
+
+        // Reset verifikasi transaksi baru
+        for (uint i = 0; i < _verifikatorBaru.length; i++) {
+            dt.sudahVerifikasiTransaksi[_verifikatorBaru[i]] = false;
+        }
+
+        dt.jumlahVerifikasiTransaksi = 0;
+        dt.adaTransaksiPending = true;
+        dt.disetujui = false; // proses jual beli belum disetujui verifikator lama
+    }
+
+    // Fungsi cek status tanah
+    function cekStatusTanah(string memory _nomorBukuTanah) public view returns (
+        string memory, address, bool, uint256, address[] memory
+    ) {
+        DataTanah storage dt = dataTanah[_nomorBukuTanah];
+        return (
+            dt.nama,
+            dt.pemilikSekarang,
+            dt.disetujui,
+            dt.jumlahVerifikasi,
+            dt.verifikator
+        );
+    }
+
+    // Fungsi cek verifikator
+    function getVerifikator(string memory _nomorBukuTanah) public view returns (address[] memory) {
+        return dataTanah[_nomorBukuTanah].verifikator;
+    }
+
+    // Fungsi riwayat pemilik
+    function getRiwayatPemilik(string memory _nomorBukuTanah) public view returns (address[] memory) {
+        return dataTanah[_nomorBukuTanah].riwayatPemilik;
+    }
+
+
+    function getDataSingkatTanah(string memory _nomorBukuTanah) public view returns (
+    string memory nomorBukuTanah,
+    string memory nama,
+    string memory nik,
+    address pemilik
+) {
+    DataTanah storage dt = dataTanah[_nomorBukuTanah];
+    return (
+        dt.nomorBukuTanah,
+        dt.nama,
+        dt.nik,
+        dt.pemilikSekarang
+    );
+}
+
+function getSemuaDataSingkat() public view returns (
+    string[] memory nomorBukuTanahList,
+    string[] memory namaList,
+    string[] memory nikList,
+    address[] memory pemilikList
+) {
+    uint length = semuaNomorBukuTanah.length;
+    nomorBukuTanahList = new string[](length);
+    namaList = new string[](length);
+    nikList = new string[](length);
+    pemilikList = new address[](length);
+
+    for (uint i = 0; i < length; i++) {
+        string memory nomor = semuaNomorBukuTanah[i];
+        DataTanah storage dt = dataTanah[nomor];
+        nomorBukuTanahList[i] = dt.nomorBukuTanah;
+        namaList[i] = dt.nama;
+        nikList[i] = dt.nik;
+        pemilikList[i] = dt.pemilikSekarang;
+    }
+
+    return (nomorBukuTanahList, namaList, nikList, pemilikList);
+}
+
+
+}

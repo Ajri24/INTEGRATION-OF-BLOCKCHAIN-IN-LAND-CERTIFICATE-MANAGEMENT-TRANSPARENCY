@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <title>Responsive Regisration Form </title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        .form.second {
+    overflow-y: auto;
+    max-height: 80vh;
+    padding-right: 10px; /* opsional: agar tidak terpotong scrollbar */
+}
+
+        body{
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start; /* Ganti center → biar mulai dari atas */
+    justify-content: center;
+    background: #4070f4;
+    overflow-y: auto; 
+        }
+        .container form .form.first,
+.container form .form.second {
+    max-height: 75vh;        /* Batasi tinggi form agar tidak melebihi viewport */
+    overflow-y: auto;        /* Aktifkan scroll vertikal */
+    padding-right: 10px;     /* Opsional: ruang untuk scrollbar */
+}
+
+        .container{
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            border-radius: 6px;
+            padding: 30px;
+            margin: 0 15px;
+            background-color: #fff;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        .container header{
+            position: relative;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        .container header::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            height: 3px;
+            width: 27px;
+            border-radius: 8px;
+            background-color: #4070f4;
+        }
+        .container form{
+            position: relative;
+            margin-top: 16px;
+            min-height: 490px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+        .container form .form{
+            position: absolute;
+            background-color: #fff;
+            transition: 0.3s ease;
+        }
+        .container form .form.second{
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(100%);
+        }
+        form.secActive .form.second{
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+        form.secActive .form.first{
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-100%);
+        }
+        .container form .title{
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            margin: 6px 0;
+            color: #333;
+        }
+        .container form .fields{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        form .fields .input-field{
+            display: flex;
+            width: calc(100% / 3 - 15px);
+            flex-direction: column;
+            margin: 4px 0;
+        }
+        .input-field label{
+            font-size: 12px;
+            font-weight: 500;
+            color: #2e2e2e;
+        }
+        .input-field input, select{
+            outline: none;
+            font-size: 14px;
+            font-weight: 400;
+            color: #333;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            padding: 0 15px;
+            height: 42px;
+            margin: 8px 0;
+        }
+        .input-field input:focus,
+        .input-field select:focus{
+            box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+        }
+        .input-field select,
+        .input-field input[type="date"]{
+            color: #707070;
+        }
+        .input-field input[type="date"]:valid{
+            color: #333;
+        }
+        .container form button, .backBtn{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 45px;
+            max-width: 200px;
+            width: 100%;
+            border: none;
+            outline: none;
+            color: #fff;
+            border-radius: 5px;
+            margin: 25px 0;
+            background-color: #4070f4;
+            transition: all 0.3s linear;
+            cursor: pointer;
+        }
+        .container form .btnText{
+            font-size: 14px;
+            font-weight: 400;
+        }
+        form button:hover{
+            background-color: #265df2;
+        }
+        form button i,
+        form .backBtn i{
+            margin: 0 6px;
+        }
+        form .backBtn i{
+            transform: rotate(180deg);
+        }
+        form .buttons{
+            display: flex;
+            align-items: center;
+        }
+        form .buttons button , .backBtn{
+            margin-right: 14px;
+        }
+        
+        @media (max-width: 750px) {
+            .container form{
+                overflow-y: scroll;
+            }
+            .container form::-webkit-scrollbar{
+               display: none;
+            }
+            form .fields .input-field{
+                width: calc(100% / 2 - 15px);
+            }
+        }
+        @media (max-width: 550px) {
+            form .fields .input-field{
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>Land Registration</header>
+<form id="landForm" method="POST" enctype="multipart/form-data">
+  <div class="form first">
+    <div class="details personal">
+      <span class="title">Owner Identity</span>
+      <div class="fields">
+        <div class="input-field">
+          <label>Nama Pemilik</label>
+          <input name="nama" type="text" placeholder="Masukkan nama lengkap" required>
+        </div>
+        <div class="input-field">
+          <label>NIK Pemilik</label>
+          <input name="nik" type="text" placeholder="Masukkan NIK" required>
+        </div>
+        <div class="input-field">
+          <label>Tempat Lahir</label>
+          <input name="tempat_lahir" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Tanggal Lahir</label>
+          <input name="tanggal_lahir" type="date" required>
+        </div>
+        <div class="input-field">
+          <label>Jenis</label>
+          <select name="jenis" required>
+            <option disabled selected>Pilih jenis</option>
+            <option>Perorangan</option>
+            <option>Badan Hukum</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>Dalam Perwalian?</label>
+          <select name="dalam_perwalian" required>
+            <option disabled selected>Pilih</option>
+            <option value="1">Ya</option>
+            <option value="0">Tidak</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>Tempat Lahir Wali</label>
+          <input name="tempat_lahir_wali" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Lahir Wali</label>
+          <input name="tanggal_lahir_wali" type="date">
+        </div>
+        <div class="input-field">
+          <label>Nomor Surat</label>
+          <input name="nomor_surat" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Surat</label>
+          <input name="tanggal_surat" type="date">
+        </div>
+        <div class="input-field">
+          <label>Ditandatangani Oleh</label>
+          <input name="ditandatangani_oleh" type="text">
+        </div>
+        <div class="input-field">
+          <label>Diterbitkan Oleh</label>
+          <input name="diterbitkan_oleh" type="text">
+        </div>
+      </div>
+    </div>
+    <button class="nextBtn" type="button">
+      <span class="btnText">Next</span>
+      <i class="uil uil-navigator"></i>
+    </button>
+  </div>
+
+  <div class="form second">
+    <div class="details address">
+      <span class="title">Land Details</span>
+      <div class="fields">
+        <div class="input-field">
+          <label>Nomor Buku Tanah</label>
+          <input name="nomor_buku_tanah" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Desa</label>
+          <input name="desa" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Kecamatan</label>
+          <input name="kecamatan" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Kabupaten</label>
+          <input name="kabupaten" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Provinsi</label>
+          <input name="provinsi" type="text" required>
+        </div>
+        <div class="input-field">
+          <label>Pemegang Hak</label>
+          <input name="pemegang_hak" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Pembukuan</label>
+          <input name="tanggal_pembukuan" type="date">
+        </div>
+        <div class="input-field">
+          <label>Oleh</label>
+          <input name="oleh" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Penerbitan</label>
+          <input name="tanggal_penerbitan" type="date">
+        </div>
+        <div class="input-field">
+          <label>Permukaan</label>
+          <input name="permukaan" type="text">
+        </div>
+        <div class="input-field">
+          <label>Alas Hak</label>
+          <input name="alas_hak" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Alas Hak</label>
+          <input name="tanggal_alas_hak" type="date">
+        </div>
+        <div class="input-field">
+          <label>Dibuat Oleh</label>
+          <input name="dibuat_oleh" type="text">
+        </div>
+        <div class="input-field">
+          <label>ID 301</label>
+          <input name="id301" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal ID301</label>
+          <input name="tanggal_id301" type="date">
+        </div>
+        <div class="input-field">
+          <label>Nomor Induk Bidang</label>
+          <input name="nomor_induk_bidang" type="text">
+        </div>
+        <div class="input-field">
+          <label>Luas (m²)</label>
+          <input name="luas" type="number" step="0.01">
+        </div>
+        <div class="input-field">
+          <label>Status</label>
+          <input name="status" type="text">
+        </div>
+        <div class="input-field">
+          <label>Nomor SU</label>
+          <input name="nomor_su" type="text">
+        </div>
+        <div class="input-field">
+          <label>Penandatangan SU</label>
+          <input name="penandatangan_su" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal TTD SU</label>
+          <input name="tanggal_tanda_tangan_su" type="date">
+        </div>
+        <div class="input-field">
+          <label>Luas Persil SU</label>
+          <input name="luas_persil_su" type="number" step="0.01">
+        </div>
+        <div class="input-field">
+          <label>Bidang Induk?</label>
+          <select name="sebagai_bidang_induk" required>
+            <option disabled selected>Pilih</option>
+            <option value="1">Ya</option>
+            <option value="0">Tidak</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>Diakui Atas Tanah?</label>
+          <select name="dihak_atas_tanah" required>
+            <option disabled selected>Pilih</option>
+            <option value="1">Ya</option>
+            <option value="0">Tidak</option>
+          </select>
+        </div>
+        <div class="input-field">
+          <label>Toponimi</label>
+          <input name="toponimi" type="text">
+        </div>
+        <div class="input-field">
+          <label>Status Batas</label>
+          <input name="status_batas" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Tercatat</label>
+          <input name="tanggal_tercatat" type="date">
+        </div>
+        <div class="input-field">
+          <label>Status Peta</label>
+          <input name="status_peta" type="text">
+        </div>
+        <div class="input-field">
+          <label>Nomor Peta</label>
+          <input name="nomor_peta" type="text">
+        </div>
+        <div class="input-field">
+          <label>Validator Batas</label>
+          <input name="validator_batas" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Validasi Batas</label>
+          <input name="tanggal_validasi_batas" type="date">
+        </div>
+        <div class="input-field">
+          <label>Validator Tekstual</label>
+          <input name="validator_tekstual" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Validasi Tekstual</label>
+          <input name="tanggal_validasi_tekstual" type="date">
+        </div>
+        <div class="input-field">
+          <label>Klasifikasi Tanah</label>
+          <input name="klasifikasi_tanah" type="text">
+        </div>
+        <div class="input-field">
+          <label>Catatan Tambahan</label>
+          <input name="catatan_tambahan" type="text">
+        </div>
+        <div class="input-field">
+          <label>Nomor Gambar Ukur</label>
+          <input name="nomor_gambar_ukur" type="text">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Pengukuran</label>
+          <input name="tanggal_pengukuran" type="date">
+        </div>
+        <div class="input-field">
+          <label>Tanggal Pembukuan Bidang</label>
+          <input name="tanggal_pembukuan_bidang" type="date">
+        </div>
+        <div class="input-field">
+          <label>Status Kepemilikan</label>
+          <input name="status_kepemilikan" type="text">
+        </div>
+        <div class="input-field">
+          <label>Upload Dokumen</label>
+          <input name="peta_tanah" type="file" accept="image/*,application/pdf">
+        </div>
+      </div>
+
+<div class="input-field">
+  <label>Alamat Verifikator</label>
+  <div id="verifikator-container">
+    <input name="verifikator[]" type="text" placeholder="0x...">
+  </div>
+  <button type="button" onclick="tambahVerifikator()">+ Tambah Verifikator</button>
+</div>
+
+
+      <div class="buttons">
+        <div class="backBtn" type="button">
+          <i class="uil uil-navigator"></i>
+          <span class="btnText">Back</span>
+        </div>
+        <button class="submit" type="submit">
+          <span class="btnText">Submit</span>
+          <i class="uil uil-navigator"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" defer></script>
+<script>
+    const form = document.querySelector("form"),
+          nextBtn = form.querySelector(".nextBtn"),
+          backBtn = form.querySelector(".backBtn"),
+          allInput = form.querySelectorAll(".first input");
+    nextBtn.addEventListener("click", ()=> {
+        allInput.forEach(input => {
+            if(input.value != ""){
+                form.classList.add('secActive');
+            }else{
+                form.classList.remove('secActive');
+            }
+        })
+    })
+    backBtn.addEventListener("click", () => form.classList.remove('secActive'));
+
+    function generateIdTanah() {
+  const timestamp = Date.now().toString(36);       // waktu sekarang dalam base36
+  const randomStr = Math.random().toString(36).substring(2, 6); // 4 karakter acak
+  return `ID-${timestamp}-${randomStr}`.toUpperCase();
+}
+document.getElementById("landForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+
+  console.log("🚀 Mengirim data ke OCR Python...");
+  try {
+    const res = await fetch("/api/unggah-tanah", {
+      method: "POST",
+      body: formData
+    });
+    console.log("📩 Respon dari server OCR:", res);
+    const result = await res.json();
+    alert(result.message);
+  } catch (err) {
+    console.error(err);
+    alert("❌ Gagal upload");
+  }
+});
+
+
+  let contract;
+  let signerAddress = "";
+  const contractAddress = "0xd604763C943F53e31469E86A2Eff0f5D380bf7cB"; // Ganti dengan alamat kontrak kamu
+let contractABI = [];      
+
+async function loadABI() {
+  try {
+    const response = await fetch('/ABI/abi.json');
+    contractABI = await response.json();
+
+    console.log("✅ ABI berhasil dimuat:");
+    console.log(contractABI); // tampilkan isi ABI di console
+
+    // Lanjut ke koneksi wallet
+    await connectWallet();
+  } catch (error) {
+    console.error("❌ Gagal memuat ABI:", error);
+    alert("❌ Tidak bisa memuat ABI dari /ABI/abi.json");
+  }
+}
+
+  // Fungsi koneksi wallet
+  async function connectWallet() {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum,"any");
+      await provider.send("eth_requestAccounts", []);
+
+const network = await provider.getNetwork();
+if (network.chainId !== 8888) {
+  alert("❌ Anda belum di jaringan Private Geth (8888)");
+  return;
+  }
+      const signer = provider.getSigner();
+      console.log("🚀 window.ethereum:", window.ethereum);
+      signerAddress = (await signer.getAddress()).toLowerCase();
+      contract = new ethers.Contract(contractAddress, contractABI, signer);
+      console.log("Alamat wallet yang terhubung:", signerAddress);
+    } else {
+      alert("MetaMask tidak ditemukan. Silakan install MetaMask terlebih dahulu.");
+    }
+  }
+
+
+  // Fungsi tambah input verifikator dinamis
+  function tambahVerifikator() {
+    const container = document.getElementById("verifikator-container");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "verifikator[]";
+    input.placeholder = "0x...";
+    input.style.marginTop = "5px";
+    container.appendChild(input);
+  }
+
+  function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+
+  // Event listener submit form
+  document.querySelector(".submit").addEventListener("click", async (e) => {
+    e.preventDefault();
+    const idTanahBaru = generateIdTanah();
+    const form = document.getElementById('landForm');
+    const formData = new FormData(form);
+
+
+
+    const file = formData.get("peta_tanah");
+  if (!file || !file.name) {
+    return alert("❌ Gambar wajib diunggah.");
+  }
+
+  try {
+    // Konversi gambar ke base64
+    const base64Image = await toBase64(file);
+const ocrPayload = {
+  image: base64Image.replace(/^data:image\/(png|jpeg|jpg);base64,/, ""),
+  userInput: {
+    nomor_surat: formData.get("nomor_surat")
+  }
+};
+
+
+    console.log("🚀 Mengirim data ke OCR Python...");
+    const res = await fetch("http://localhost:5000/api/ocr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(ocrPayload)
+    });
+
+    const ocrResult = await res.json();
+    console.log("📩 Respon dari server OCR:", ocrResult);
+
+    if (!ocrResult.valid) {
+      return alert(`❌ Dokumen tidak valid menurut OCR.\nSkor: ${ocrResult.validity_score}%\nStatus: ${ocrResult.status}`);
+    }
+
+    alert("✅ Dokumen valid. Mengirim ke blockchain...");
+    await pushKeBlockchain(formData);
+
+  } catch (err) {
+  }
+
+const verifikatorInputs = document.querySelectorAll('input[name="verifikator[]"]');
+let verifikator;
+
+try {
+  verifikator = Array.from(verifikatorInputs)
+    .map(input => input.value.trim())
+    .filter(addr => addr !== "")
+    .map(addr => ethers.utils.getAddress(addr)); // <-- format dan validasi checksum
+  console.log("✅ Verifikator valid dan sudah diformat:", verifikator);
+} catch (error) {
+  alert("❌ Alamat verifikator salah format:\n" + error.message);
+  return;
+}
+
+    if (!window.ethereum || !signerAddress) {
+      alert("🔐 Wallet belum terhubung!");
+      return;
+    }
+    
+    console.log("Verifikator sebelum dikirim:", verifikator);
+console.log("Tipe:", typeof verifikator);
+console.log("Apakah array?", Array.isArray(verifikator));
+
+
+    console.log("🔍 Cek contract:", contract);
+    console.log("🔍 Ada fungsi tambahDataTanah?", typeof contract.tambahDataTanah);
+    if (!Array.isArray(verifikator) || verifikator.length === 0) {
+  alert("❌ Minimal satu verifikator harus diisi.");
+  return;
+}
+    for (const addr of verifikator) {
+  if (!ethers.utils.isAddress(addr)) {
+    alert(`❌ Alamat verifikator tidak valid: ${addr}`);
+    return;
+  }}
+
+  console.log("📌 signerAddress (raw):", signerAddress);
+console.log("📌 typeof signerAddress:", typeof signerAddress);
+console.log("📌 is valid Ethereum address:", ethers.utils.isAddress(signerAddress));
+
+let formattedSigner;
+try {
+  formattedSigner = ethers.utils.getAddress(signerAddress);
+  console.log("📌 signerAddress (checksummed):", formattedSigner);
+} catch (e) {
+  alert("❌ signerAddress tidak valid: " + e.message);
+  return;
+}
+
+    try {
+      const tx = await contract.tambahDataTanah(
+        formData.get("nomor_buku_tanah"),
+        formData.get("desa"),
+        formData.get("kecamatan"),
+        formData.get("kabupaten"),
+        formData.get("provinsi"),
+        formData.get("pemegang_hak"),
+        formData.get("tanggal_pembukuan"),
+        formData.get("oleh"),
+        formData.get("tanggal_penerbitan"),
+        formData.get("permukaan"),
+        formData.get("alas_hak"),
+        formData.get("tanggal_alas_hak"),
+        formData.get("dibuat_oleh"),
+        formData.get("id301"),
+        formData.get("tanggal_id301"),
+        formData.get("nama"),
+        formData.get("nik"),
+        formData.get("tempat_lahir"),
+        formData.get("tanggal_lahir"),
+        formData.get("dalam_perwalian") === "1" ? true : false,
+        formData.get("tempat_lahir_wali"),
+        formData.get("tanggal_lahir_wali"),
+        formData.get("jenis"),
+        formData.get("nomor_surat"),
+        formData.get("tanggal_surat"),
+        formData.get("ditandatangani_oleh"),
+        formData.get("diterbitkan_oleh"),
+        formData.get("nomor_induk_bidang"),
+        parseInt(formData.get("luas")) || 0,
+        formData.get("status"),
+        formData.get("nomor_su"),
+        formData.get("penandatangan_su"),
+        formData.get("tanggal_tanda_tangan_su"),
+        parseInt(formData.get("luas_persil_su")) || 0,
+        formData.get("sebagai_bidang_induk") === "1" ? true : false,
+        formData.get("dihak_atas_tanah") === "1" ? true : false,
+        formData.get("toponimi"),
+        formData.get("status_batas"),
+        formData.get("tanggal_tercatat"),
+        formData.get("status_peta"),
+        formData.get("nomor_peta"),
+        formData.get("validator_batas"),
+        formData.get("tanggal_validasi_batas"),
+        formData.get("validator_tekstual"),
+        formData.get("tanggal_validasi_tekstual"),
+        formData.get("klasifikasi_tanah"),
+        formData.get("catatan_tambahan"),
+        formData.get("nomor_gambar_ukur"),
+        formData.get("tanggal_pengukuran"),
+        formData.get("tanggal_pembukuan_bidang"),
+        formData.get("status_kepemilikan"),
+        ethers.utils.getAddress(signerAddress),    // Wallet pengguna sebagai pemilik tanah
+        verifikator       // Array alamat wallet verifikator
+      );
+
+      await tx.wait();
+      alert("✅ Data tanah berhasil disimpan ke blockchain!");
+      // window.location.href = "dashboard.html";
+    } catch (err) {
+      alert("❌ Gagal simpan: " + err.message);
+    }
+  });
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadABI(); // ini akan lanjut ke connectWallet()
+});
+
+
+
+</script>
+</body>
+</html>
+
+

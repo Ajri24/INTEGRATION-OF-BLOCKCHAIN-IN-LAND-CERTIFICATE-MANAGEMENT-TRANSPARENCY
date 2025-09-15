@@ -1,0 +1,619 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_namaPemilikBaru",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_alamatPemilikBaru",
+				"type": "address"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_verifikatorBaru",
+				"type": "address[]"
+			}
+		],
+		"name": "ajukanJualTanah",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_desa",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_kecamatan",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_kabupaten",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_provinsi",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_pemegangHak",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalPembukuan",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_oleh",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalPenerbitan",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_permukaan",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_alasHak",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalAlasHak",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_dibuatOleh",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_id301",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalID301",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nama",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nik",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tempatLahir",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalLahir",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_dalamPerwalian",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tempatLahirWali",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalLahirWali",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_jenis",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nomorSurat",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalSurat",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_ditandatanganiOleh",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_diterbitkanOleh",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nomorIndukBidang",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_luas",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_status",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nomorSU",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_penandatanganSU",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalTandaTanganSU",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_luasPersilSU",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_sebagaiBidangInduk",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "_dihakAtasTanah",
+				"type": "bool"
+			},
+			{
+				"internalType": "string",
+				"name": "_toponimi",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_statusBatas",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalTercatat",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_statusPeta",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nomorPeta",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_validatorBatas",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalValidasiBatas",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_validatorTekstual",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalValidasiTekstual",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_klasifikasiTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_catatanTambahan",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_nomorGambarUkur",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalPengukuran",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_tanggalPembukuanBidang",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_statusKepemilikan",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_pemilik",
+				"type": "address"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_verifikator",
+				"type": "address[]"
+			}
+		],
+		"name": "tambahDataTanah",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "pemilikBaru",
+				"type": "address"
+			}
+		],
+		"name": "TanahBerpindahKepemilikan",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "TanahTerverifikasi",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "verifikasiTanahBaru",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "verifikasiTransaksi",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "cekStatusTanah",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "getDataSingkatTanah",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "nama",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "nik",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "pemilik",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "getDetailTanah",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "nomorIndukBidang",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pemilikNama",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "pemilik",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "disetujui",
+				"type": "bool"
+			},
+			{
+				"internalType": "address[]",
+				"name": "verifikator",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "getRiwayatPemilik",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getSemuaDataSingkat",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "nomorBukuTanahList",
+				"type": "string[]"
+			},
+			{
+				"internalType": "string[]",
+				"name": "namaList",
+				"type": "string[]"
+			},
+			{
+				"internalType": "string[]",
+				"name": "nikList",
+				"type": "string[]"
+			},
+			{
+				"internalType": "address[]",
+				"name": "pemilikList",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getSemuaNomorBukuTanah",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			}
+		],
+		"name": "getVerifikator",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "semuaNomorBukuTanah",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_addr",
+				"type": "address"
+			}
+		],
+		"name": "sudahVerifikasi",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_nomorBukuTanah",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_addr",
+				"type": "address"
+			}
+		],
+		"name": "sudahVerifikasiTransaksi",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

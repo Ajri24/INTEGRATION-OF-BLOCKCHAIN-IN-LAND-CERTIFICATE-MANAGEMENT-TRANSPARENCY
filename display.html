@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <title>Land Detail View</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #4070f4;
+    }
+    .container {
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+      border-radius: 6px;
+      padding: 30px;
+      margin: 0 15px;
+      background-color: #fff;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .container header {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    .container form {
+      margin-top: 16px;
+      min-height: 490px;
+    }
+    .form {
+      display: none;
+    }
+    .form.active {
+      display: block;
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 10px 0;
+    }
+    .fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .input-field {
+      width: calc(100% / 3 - 10px);
+    }
+    .input-field label {
+      font-size: 12px;
+      color: #2e2e2e;
+    }
+    .input-field div {
+      font-size: 14px;
+      padding: 5px;
+      background: #f1f1f1;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    .buttons button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      background: #4070f4;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>Land Detail View</header>
+  <form>
+    <div class="form first active">
+      <div class="details personal">
+        <span class="title">Owner Identity</span>
+        <div class="fields" id="ownerFields">
+          <!-- Owner identity fields populated by JS -->
+        </div>
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="goToSecond()">Next</button>
+      </div>
+    </div>
+    <div class="form second">
+      <div class="details address">
+        <span class="title">Land Details</span>
+        <div class="fields" id="landFields">
+          <!-- Land detail fields populated by JS -->
+        </div>
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="goToFirst()">Back</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script>
+  const form1 = document.querySelector('.form.first');
+  const form2 = document.querySelector('.form.second');
+
+  function goToSecond() {
+    form1.classList.remove('active');
+    form2.classList.add('active');
+  }
+
+  function goToFirst() {
+    form2.classList.remove('active');
+    form1.classList.add('active');
+  }
+
+  function createField(label, value) {
+    return `
+      <div class="input-field">
+        <label>${label}</label>
+        <div>${value !== null ? value : '-'}</div>
+      </div>
+    `;
+  }
+
+  async function loadDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (!id) return;
+
+    const res = await fetch(`/api/detail/${id}`);
+    const data = await res.json();
+
+    const pemilik = data.pemilik || {};
+    const tanah = data.tanah || {};
+
+    const log = data.log_validasi || [];
+const logSection = log.map(entry => `
+  <div class="input-field">
+    <label>Validasi (${entry.status_validasi})</label>
+    <div>${entry.catatan} - ${new Date(entry.tanggal_validasi).toLocaleString()}</div>
+  </div>
+`).join('');
+document.getElementById('landFields').innerHTML += logSection;
+
+    const ownerFields = [
+      createField('Nama Pemilik', pemilik.nama),
+      createField('Tempat Lahir', pemilik.tempat_lahir),
+      createField('Tanggal Lahir', pemilik.tanggal_lahir),
+      createField('Jenis Pemilik', pemilik.jenis_pemilik),
+      createField('Dalam Perwalian', pemilik.dalam_perwalian ? 'Ya' : 'Tidak'),
+      createField('Tempat Lahir Wali', pemilik.tempat_lahir_wali),
+      createField('Tanggal Lahir Wali', pemilik.tanggal_lahir_wali),
+      createField('SK Redistribusi', pemilik.surat_keputusan_redistribusi),
+      createField('Tanggal SK', pemilik.tanggal_sk),
+      createField('Nama Kepala Kantor', pemilik.nama_kepala_kantor),
+      createField('Kantor Penerbit', pemilik.kantor_penerbit)
+    ];
+
+    const landFields = [
+      createField('Nomor Buku Tanah', tanah.nomor_buku_tanah),
+      createField('Desa', tanah.desa),
+      createField('Kecamatan', tanah.kecamatan),
+      createField('Kabupaten', tanah.kabupaten),
+      createField('Provinsi', tanah.provinsi),
+      createField('Tanggal Pembukuan', tanah.tanggal_pembukuan),
+      createField('Penerbit', tanah.penerbit),
+      createField('Asal Permohonan', tanah.asal_permohonan),
+      createField('Nomor Surat Pelepasan HGU', tanah.nomor_surat_pelepasan_hgu),
+      createField('Nomor SK Pelepasan Kawasan Hutan', tanah.nomor_sk_pelepasan_kawasan_hutan),
+      createField('Tanggal SK Pelepasan', tanah.tanggal_sk_pelepasan),
+      createField('No. D301', tanah.d301),
+      createField('Tanggal D301', tanah.tanggal_d301),
+      createField('Nomor Induk Bidang', tanah.nomor_induk_bidang),
+      createField('Luas (m²)', tanah.luas),
+      createField('Status Bidang', tanah.status_bidang),
+      createField('Nomor SU', tanah.nomor_su),
+      createField('Penandatangan SU', tanah.petugas_penandatangan),
+      createField('Tanggal TTD SU', tanah.tanggal_penandatanganan_su),
+      createField('Luas Persil', tanah.luas_persil),
+      createField('Status Hak Tanah', tanah.status_hak_tanah ? 'TRUE' : 'FALSE'),
+      createField('Toponimi', tanah.toponimi),
+      createField('Batas Bidang', tanah.batas_bidang),
+      createField('Keadaan Tanah', tanah.keadaan_tanah),
+      createField('Nomor Gambar Ukur', tanah.nomor_gambar_ukur),
+      createField('Tanggal Gambar Ukur', tanah.tanggal_gambar_ukur),
+      createField('Tanggal Pembukuan Ulang', tanah.tanggal_pembukuan_ulang),
+      createField('Peta Tanah', tanah.peta_tanah)
+    ];
+
+    document.getElementById('ownerFields').innerHTML = ownerFields.join('');
+    document.getElementById('landFields').innerHTML = landFields.join('');
+  }
+
+  window.onload = loadDetail;
+</script>
+</body>
+</html>

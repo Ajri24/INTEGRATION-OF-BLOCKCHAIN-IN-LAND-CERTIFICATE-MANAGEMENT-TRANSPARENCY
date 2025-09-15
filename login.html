@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <button onclick="loginWithMetaMask()">Login Wallet</button>
+  <p id="currentWallet">Wallet: -</p>
+  <h3 id="roleInfo">Peran: -</h3>
+
+  <!-- Jika OCR/BPN/PPAT -->
+  <div id="verifikasiSection" style="display:none;">
+    <h4>Verifikasi yang harus kamu lakukan:</h4>
+    <ul id="verifikasiList"></ul>
+  </div>
+
+  <!-- Jika Pemilik -->
+  <div id="pemilikSection" style="display:none;">
+    <h4>Tanah yang kamu miliki:</h4>
+    <ul id="tanahList"></ul>
+  </div>
+
+  <script>
+    let currentWallet = null;
+let role = null;
+
+async function loginWithMetaMask() {
+    if (window.ethereum) {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        currentWallet = accounts[0];
+        document.getElementById('currentWallet').innerText = `Wallet: ${currentWallet}`;
+        checkRole(currentWallet);
+    } else {
+        alert("MetaMask belum tersedia.");
+    }
+}
+
+async function checkRole(wallet) {
+    try {
+        const res = await fetch(`/api/peran/${wallet}`);
+        const data = await res.json();
+        role = data.peran;
+
+        document.getElementById('roleInfo').innerText = `Peran: ${role}`;
+
+        if (["OCR", "BPN", "PPAT"].includes(role)) {
+            loadTugasVerifikasi(wallet);
+        } else if (role === "Pemilik") {
+            loadDataPemilik(wallet);
+        }
+    } catch (err) {
+        console.error("Gagal cek peran:", err);
+    }
+}
+
+async function loadTugasVerifikasi(wallet) {
+    const res = await fetch(`/api/verifikasi/tugas/${wallet}`);
+    const data = await res.json();
+    
+    const list = document.getElementById('verifikasiList');
+    list.innerHTML = '';
+
+    data.forEach(item => {
+        const li = document.createElement('li');
+        li.innerText = `Tanah ID: ${item.id}, Status Saat Ini: ${item.status}`;
+        list.appendChild(li);
+    });
+
+    document.getElementById('verifikasiSection').style.display = 'block';
+}
+
+async function loadDataPemilik(wallet) {
+    const res = await fetch(`/api/pemilik/tanah/${wallet}`);
+    const data = await res.json();
+
+    const list = document.getElementById('tanahList');
+    list.innerHTML = '';
+
+    data.forEach(item => {
+        const li = document.createElement('li');
+        li.innerText = `Tanah ID: ${item.id}, Lokasi: ${item.desa}, Status: ${item.statusVerifikasi}`;
+        list.appendChild(li);
+    });
+
+    document.getElementById('pemilikSection').style.display = 'block';
+}
+
+  </script>
+</body>
+
+</html>

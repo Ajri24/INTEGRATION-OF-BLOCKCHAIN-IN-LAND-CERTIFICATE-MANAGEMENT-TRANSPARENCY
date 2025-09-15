@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifikasi Data Tanah</title>
+  <link rel="stylesheet" href="style_dashboard.css">
+
+
+  <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+  <style>
+    .btn-action {
+      padding: 4px 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .btn-action:hover {
+      background-color: #45a049;
+    }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: white;
+    }
+    .badge-success { background-color: #4CAF50; }
+    .badge-warning { background-color: #ff9800; }
+    .badge-danger { background-color: #f44336; }
+    .badge-secondary { background-color: #607d8b; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    z-index: 1000;
+  }
+
+  .modal-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    table-layout: fixed;
+  }
+
+  .modal-box th, .modal-box td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    word-wrap: break-word;
+  }
+
+  .modal-box th {
+    width: 35%;
+    background: #f5f5f5;
+  }
+
+  .modal-box td {
+    width: 65%;
+  }
+
+  .modal-box .buttons {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .modal-box button {
+    font-size: 14px;
+    padding: 6px 12px;
+    margin: 0 5px;
+    border: none;
+    background: #4070f4;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .modal-box button:hover {
+    background: #3058c5;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+    display: block;
+  }
+
+  section:not(.active) .modal-box,
+  section:not(.active) .overlay {
+    display: none;
+  }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 8px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    
+  </style>
+</head>
+<body>
+    
+<section>
+  <span class="overlay"></span>
+  <div class="modal-box">
+    <i class="fa-regular fa-circle-check"></i>
+    <h2>Detail Tanah</h2>
+    <div id="detailContent"></div>
+    <div class="buttons">
+      <button class="close-btn">Ok, Close</button>
+    </div>
+  </div>
+</section>
+
+
+<input type="checkbox" id="menu-toggle">
+<div class="sidebar">
+    <div class="side-header"><h3>M<span>odern</span></h3></div>
+    <div class="side-content">
+        <div class="profile">
+            <div class="profile-img bg-img" style="background-image: url(img/3.jpeg)"></div>
+            <h4>David Green</h4><small>Art Director</small>
+        </div>
+        <div class="side-menu">
+            <ul>
+                <li><a href="#" class="active"><span class="las la-home"></span><small>Dashboard</small></a></li>
+                <li><a href=""><span class="las la-user-alt"></span><small>Profile</small></a></li>
+                <li><a href="verifikasi.html"><span class="las la-envelope"></span><small>Mailbox</small></a></li>
+                <li><a href="activity.html"><span class="las la-clipboard-list"></span><small>Projects</small></a></li>
+                <li><a href="#"><span class="las la-shopping-cart"></span><small>Orders</small></a></li>
+                <li><a href="#"><span class="las la-tasks"></span><small>Tasks</small></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="main-content">
+    <header>
+        <div class="header-content">
+            <label for="menu-toggle"><span class="las la-bars"></span></label>
+            <div class="header-menu">
+                <label><span class="las la-search"></span></label>
+                <div class="notify-icon"><span class="las la-envelope"></span><span class="notify">4</span></div>
+                <div class="notify-icon"><span class="las la-bell"></span><span class="notify">3</span></div>
+                <div class="user">
+                    <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
+                    <span class="las la-power-off"></span><span>Logout</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="page-header">
+            <h1>Dashboard</h1><small>Home / Dashboard</small>
+        </div>
+        <div class="page-content">
+            <div class="records table-responsive">
+                <div class="record-header">
+                    <div class="add">
+                        <span>Entries</span>
+                        <select><option value="">ID</option></select>
+                        <button>Add record</button>
+                    </div>
+                    <div class="browse">
+                        <input type="search" placeholder="Search" class="record-search">
+                        <select><option value="">Status</option></select>
+                    </div>
+                </div>
+                <div>
+                    <table width="100%" id="tableTanah">
+                        <thead>
+                            <tr>
+                                <th>Nomor Buku Tanah</th><th>Pemilik</th><th>Nik</th><th>Wallet</th><th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Data akan diisi dari fetch JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<!-- Notifikasi -->
+<div id="notif" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background-color: #333;
+  color: white;
+  border-radius: 6px;
+  display: none;
+  z-index: 9999;
+"></div>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" defer></script>
+
+
+<script>
+let contract;
+let signerAddress = "";
+const contractAddress = "0xd604763C943F53e31469E86A2Eff0f5D380bf7cB";
+
+
+async function connectWallet() {
+  if (window.ethereum) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    await provider.send("eth_requestAccounts", []);
+
+    const network = await provider.getNetwork();
+    if (network.chainId !== 8888) {
+      alert("❌ Anda belum di jaringan Private Geth (8888)");
+      return;
+    }
+
+    const signer = provider.getSigner();
+    signerAddress = (await signer.getAddress()).toLowerCase();
+
+    const response = await fetch("/ABI/abi.json");
+    if (!response.ok) {
+      alert("Gagal memuat ABI dari server");
+      return;
+    }
+
+    const contractABI = await response.json();
+    contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    // ✅ log setelah kontrak dibuat
+    console.log("📦 Connected contract:", contract.address);
+    console.log("🌐 Connected network:", network);
+    console.log("Alamat wallet yang terhubung:", signerAddress);
+
+    await cekVerifikasiTertunda();
+    await loadTanahFromBlockchain();
+  } else {
+    alert("MetaMask tidak ditemukan. Silakan install MetaMask terlebih dahulu.");
+  }
+}
+
+async function isAllVerifikasiTrue(nomorBT, verifikatorList) {
+  for (const addr of verifikatorList) {
+    const status = await contract.sudahVerifikasi(nomorBT, addr);
+    if (!status) return false;
+  }
+  return true;
+}
+
+
+async function loadRingkasanTanah() {
+  const jumlahData = await contract.getJumlahData(); // buat fungsi ini di Solidity kalau belum ada
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+
+  for (let i = 0; i < jumlahData; i++) {
+    const nomorBukuTanah = await contract.getSemuaNomorBukuTanah(i); // atau akses semuaNomorBukuTanah[i]
+    const dt = await contract.getSeluruhDataTanah(nomorBukuTanah);
+
+    const pemilik = dt[8]; // address pemilik
+    const nik = dt[17]; // string nik
+    const nomorBT = dt[0]; // string nomorBukuTanah
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${pemilik}</td>
+      <td>${nik}</td>
+      <td>${nomorBT}</td>
+      <td><button onclick="showDetailTanah('${nomorBT}')">Detail</button></td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+async function loadTanahFromBlockchain() {
+  if (!signerAddress) {
+    console.warn("signerAddress belum terisi, skip render");
+    return;
+  }
+
+  console.log("🚨 signerAddress:", signerAddress);
+
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+
+  try {
+    const [nomorBTList, namaList, nikList, pemilikList] = await contract.getSemuaDataSingkat();
+
+    for (let i = 0; i < nomorBTList.length; i++) {
+      const id = nomorBTList[i];
+      const nama = namaList[i];
+      const nik = nikList[i];
+      const pemilik = pemilikList[i];
+
+      const verifikatorList = await contract.getVerifikator(id);
+      const sudahVerif = await contract.sudahVerifikasi(id, signerAddress);
+      const semuaSudahVerifikasi = await isAllVerifikasiTrue(id, verifikatorList);
+
+      let tombolAksi = `
+  <button class="btn-action" onclick="showDetail('${id}')">Detail</button>
+  <button class="btn-action" onclick="showRiwayat('${id}')">Riwayat Pemilik</button>
+`;
+
+      // Jika wallet adalah verifikator lama dan belum verifikasi
+      if (
+        verifikatorList.map(a => a.toLowerCase()).includes(signerAddress.toLowerCase()) &&
+        !sudahVerif
+      ) {
+        tombolAksi += `
+          <button class="btn-action" onclick="verifikasi('${id}')">Verifikasi</button>
+          <button class="btn-action" onclick="tolak('${id}')">Tolak</button>
+        `;
+      }
+
+      // Jika semua verifikator sudah verifikasi dan wallet adalah pemilik tanah
+      if (
+        semuaSudahVerifikasi &&
+        signerAddress.toLowerCase() === pemilik.toLowerCase()
+      ) {
+        tombolAksi += `
+          <button class="btn-action" onclick="showAjukanJual('${id}')">Ajukan Balik Nama</button>
+        `;
+      }
+
+      // 🔍 Cek apakah bisa verifikasi jual pakai callStatic
+      try {
+        await contract.callStatic.verifikasiTransaksi(id); // simulasi, tidak kirim transaksi
+        tombolAksi += `
+          <button class="btn-action" onclick="verifikasiJual('${id}')">Verifikasi balik nama</button>
+        `;
+      } catch (err) {
+        // tidak bisa verifikasi jual, abaikan
+        console.log(`Tidak bisa verifikasi jual untuk ${id}:`, err.message);
+      }
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${id}</td>
+        <td>${nama}</td>
+        <td>${nik}</td>
+        <td>${pemilik}</td>
+        <td>${tombolAksi}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  } catch (err) {
+    console.error("Gagal memuat data tanah:", err);
+    showNotif("❌ Gagal memuat data tanah", "#f44336");
+  }
+}
+
+async function verifikasi(id) {
+  try {
+    const tx = await contract.verifikasiTanahBaru(id);
+    await tx.wait();
+    showNotif("✅ Berhasil diverifikasi.");
+    await loadTanahFromBlockchain();
+  } catch (err) {
+    showNotif("❌ Gagal verifikasi: " + err.message, "#f44336");
+  }
+}
+
+async function tolak(id) {
+  try {
+    const tx = await contract.tolak(id);
+    await tx.wait();
+    showNotif("❌ Data berhasil ditolak.");
+    await loadTanahFromBlockchain();
+  } catch (err) {
+    showNotif("❌ Gagal menolak: " + err.message, "#f44336");
+  }
+}
+
+// async function ajukanJual(id) {
+//   const namaBaru = prompt("Masukkan nama pemilik baru:");
+//   const alamatBaru = prompt("Masukkan alamat wallet pemilik baru:");
+//   const verifikatorBaru = prompt("Masukkan alamat verifikator baru (pisahkan dengan koma):").split(',');
+
+//   try {
+//     const tx = await contract.ajukanJualTanah(id, namaBaru, alamatBaru, verifikatorBaru);
+//     await tx.wait();
+//     showNotif("✅ Berhasil mengajukan jual tanah");
+//     await loadTanahFromBlockchain();
+//   } catch (err) {
+//     console.error("❌ Gagal ajukan jual:", err);
+//     showNotif("❌ Gagal ajukan jual: " + err.message, "#f44336");
+//   }
+// }
+
+function showAjukanJual(id) {
+  const detailContent = document.getElementById("detailContent");
+  detailContent.innerHTML = `
+    <h3 style="margin-bottom:10px;">Ajukan Balik Nama</h3>
+    <form id="formAjukanJual">
+      <table>
+        <tr>
+          <td>Nama Pemilik Baru</td>
+          <td><input type="text" id="namaBaru" required></td>
+        </tr>
+        <tr>
+          <td>Alamat Wallet Pemilik Baru</td>
+          <td><input type="text" id="alamatBaru" required></td>
+        </tr>
+        <tr>
+          <td>Alamat Verifikator Baru</td>
+          <td><input type="text" id="verifikatorBaru" placeholder="Pisahkan dengan koma" required></td>
+        </tr>
+      </table>
+      <div style="margin-top:15px; text-align:right;">
+        <button type="button" onclick="submitAjukanJual('${id}')" class="btn-action">Submit</button>
+      </div>
+    </form>
+  `;
+
+  document.querySelector("section").classList.add("active");
+}
+
+async function submitAjukanJual(id) {
+  const namaBaru = document.getElementById("namaBaru").value.trim();
+  const alamatBaru = document.getElementById("alamatBaru").value.trim();
+  const verifikatorBaru = document.getElementById("verifikatorBaru").value.split(',').map(v => v.trim());
+
+  if (!namaBaru || !alamatBaru || verifikatorBaru.length === 0) {
+    showNotif("⚠️ Semua field wajib diisi", "#f44336");
+    return;
+  }
+
+  try {
+    const tx = await contract.ajukanJualTanah(id, namaBaru, alamatBaru, verifikatorBaru);
+    await tx.wait();
+    showNotif("✅ Berhasil mengajukan jual tanah");
+    closeModal();
+    await loadTanahFromBlockchain();
+  } catch (err) {
+    console.error("❌ Gagal ajukan jual:", err);
+    showNotif("❌ Gagal ajukan jual: " + err.message, "#f44336");
+  }
+}
+
+
+async function verifikasiJual(id) {
+  try {
+    const tx = await contract.verifikasiTransaksi(id);
+    await tx.wait();
+    showNotif("✅ Verifikasi jual beli berhasil");
+    await loadTanahFromBlockchain();
+  } catch (err) {
+    console.error("❌ Gagal verifikasi jual:", err);
+    showNotif("❌ Gagal verifikasi jual: " + err.message, "#f44336");
+  }
+}
+
+
+async function cekVerifikasiTertunda() {
+  try {
+    const semuaId = await contract.getSemuaNomorBukuTanah();
+    if (!semuaId || semuaId.length === 0) {
+      console.warn("Tidak ada data tanah ditemukan.");
+      return;
+    }
+
+    console.log("✅ Semua ID tanah:", semuaId);
+
+    for (const id of semuaId) {
+      const verifikator = await contract.getVerifikator(id);
+      const sudah = await contract.sudahVerifikasi(id, signerAddress);
+      if (verifikator.includes(signerAddress) && !sudah) {
+        showNotif(`📢 Anda harus verifikasi tanah ${id}`);
+      }
+    }
+  } catch (err) {
+    console.error("❌ Gagal cek verifikasi tertunda:", err);
+  }
+}
+
+
+async function ambilSemuaDataTanah() {
+  const semuaID = await contract.getSemuaNomorBukuTanah();
+  const hasil = [];
+
+  for (const id of semuaID) {
+    const [nomorIndukBidang, nama, pemilik, disetujui, verifikator] = await contract.getDetailTanah(id);
+    hasil.push({
+      id,
+      nomorIndukBidang,
+      nama,
+      pemilik,
+      disetujui,
+      verifikator,
+    });
+  }
+
+  console.log("Data semua tanah:", hasil);
+  return hasil;
+}
+
+
+function showNotif(message, color = '#333') {
+  const notif = document.getElementById('notif');
+  notif.textContent = message;
+  notif.style.backgroundColor = color;
+  notif.style.display = 'block';
+  setTimeout(() => {
+    notif.style.display = 'none';
+  }, 4000);
+}
+
+async function showRiwayat(id) {
+  try {
+    const riwayat = await contract.getRiwayatPemilik(id); 
+    console.log("Riwayat Pemilik:", riwayat);
+
+    const detailContent = document.getElementById("detailContent");
+    detailContent.innerHTML = `
+      <h3 style="margin-bottom:10px;">Riwayat Pemilik</h3>
+      <table>
+        <tr><th>No</th><th>Alamat Pemilik</th></tr>
+        ${riwayat.map((addr, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${addr}</td>
+          </tr>
+        `).join("")}
+      </table>
+    `;
+
+    document.querySelector("section").classList.add("active");
+  } catch (err) {
+    console.error("❌ Gagal ambil riwayat pemilik:", err);
+    showNotif("❌ Gagal ambil riwayat pemilik", "#f44336");
+  }
+}
+
+
+ async function showDetail(id) {
+    const detail = await contract.getDetailTanah(id);
+    console.log("Detail Tanah:", detail);
+
+    const detailContent = document.getElementById("detailContent");
+    detailContent.innerHTML = `
+      <table>
+        <tr><th>ID Tanah</th><td>${detail[0]}</td></tr>
+        <tr><th>Nama Pemilik</th><td>${detail[1]}</td></tr>
+        <tr><th>Alamat Wallet</th><td>${detail[2]}</td></tr>
+        <tr><th>Status Validasi</th><td>${detail[3] ? "✅ Valid" : "❌ Belum Valid"}</td></tr>
+        <tr><th>Verifikator</th>
+            <td>
+              <ul style="padding-left: 20px; margin:0;">
+                ${detail[4].map(v => `<li>${v}</li>`).join("")}
+              </ul>
+            </td>
+        </tr>
+      </table>
+    `;
+
+    document.querySelector("section").classList.add("active");
+  }
+
+  const section = document.querySelector("section"),
+    overlay = document.querySelector(".overlay"),
+    closeBtn = document.querySelector(".close-btn");
+
+  overlay.addEventListener("click", () =>
+    section.classList.remove("active")
+  );
+  closeBtn.addEventListener("click", () =>
+    section.classList.remove("active")
+  );
+window.addEventListener("load", connectWallet);
+</script>
+
+
+
+</body>
+</html>
